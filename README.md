@@ -111,14 +111,14 @@ InvitationManager 類別負責管理會員之間的邀請行為，包括：檢�
 
 | 類別關係 | 關係型態 | 說明 |
 |----------|----------|------|
-| `Member → PersonalInfo`<br>`Filter → PersonalInfo` | 繼承（Inheritance） | `Member` 與 `Filter` 類別繼承 `PersonalInfo`，共用 `gender` 與 `region` 屬性。 |
-| `Filter 1 → 0..* Member` | 使用（Usage） | `Filter` 使用 `Member` 資料作篩選比對。一個 `Filter` 可比對 0 個以上 `Member`。 |
-| `InvitationManager 1..* ←→ 1..* Member` | 相互使用（Bidirectional Dependency） | `InvitationManager` 操作 `Member` 檢查邀請條件，`Member` 亦透過其發送邀請。多個 `Member` 可共用多個 `InvitationManager`。 |
-| `InvitationManager 1 → 0..* Invitation` | 包含（Composition） | 每個 `InvitationManager` 擁有多筆 `Invitation` 記錄，負責管理邀請生命週期。 |
+| `Member → PersonalInfo`<br>`Filter → PersonalInfo` | Generalization（Inheritance） | `Member` 與 `Filter` 類別繼承 `PersonalInfo`，共用 `gender` 與 `region` 屬性。 |
+| `Filter 1 → 0..* Member` | Dependency | `Filter` 使用 `Member` 資料作篩選比對。一個 `Filter` 可比對 0 個以上 `Member`。 |
+| `InvitationManager 1..* ←→ 1..* Member` | Dependency | `InvitationManager` 操作 `Member` 檢查邀請條件，`Member` 亦透過其發送邀請。多個 `Member` 可共用多個 `InvitationManager`。 |
+| `InvitationManager 1 → 0..* Invitation` | Association | 每個 `InvitationManager` 擁有多筆 `Invitation` 記錄，負責管理邀請生命週期。 |
 | `Invitation 0..* → 1 Member` | 關聯（Association） | 每筆 `Invitation` 包含 `sender` 與 `receiver`（皆為 `Member`）；而每位 `Member` 可出現在多筆邀請中。 |
-| `Invitation 1 → 1 InvitationStatus` | 擁有列舉（Enumeration） | `Invitation` 狀態由 `InvitationStatus` 列舉控制，限制值為 `Pending`、`Accepted` 或 `Declined`。 |
-| `InvitationManager 1 → 0..* Notification` | 依賴（Dependency） | `InvitationManager` 建立並發送 `Notification` 通知接收者新邀請。 |
-| `Notification 1..* → 1..* Member` | 使用（Usage） | 每個通知指向一位或多位 `Member`，顯示邀請訊息。 |
+| `Invitation 1 → 1 InvitationStatus` | 列舉 Association | `Invitation` 狀態由 `InvitationStatus` 列舉控制，限制值為 `Pending`、`Accepted` 或 `Declined`。 |
+| `InvitationManager 1 → 0..* Notification` | Dependency | `InvitationManager` 建立並發送 `Notification` 通知接收者新邀請。 |
+| `Notification 1..* → 1..* Member` | Dependency | 每個通知指向一位或多位 `Member`，顯示邀請訊息。 |
 
 ---
 
