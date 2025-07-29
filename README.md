@@ -2,6 +2,10 @@
 本專案以 交友邀請系統 為核心，設計一套具完整邏輯的類別架構。系統透過物件導向分析與設計方法，建構出多個互相關聯的類別，用以管理會員資訊、篩選條件、邀請流程與通知功能。以下為各類別說明與關聯摘要，並包含對應的 UML 類別圖（PlantUML 語法可見於專案內部檔案）。
 
 ---
+## 類別圖
+![類別圖](ClassDiagram/類別圖.png)
+
+---
 ## 🧱類別架構概覽
 本系統包含以下類別與一個列舉型別：
 - PersonalInfo（抽象基底類別）
@@ -116,6 +120,120 @@ InvitationManager 類別負責管理會員之間的邀請行為，包括：檢�
 | `InvitationManager 1 → 0..* Notification` | 依賴（Dependency） | `InvitationManager` 建立並發送 `Notification` 通知接收者新邀請。 |
 | `Notification 1..* → 1..* Member` | 使用（Usage） | 每個通知指向一位或多位 `Member`，顯示邀請訊息。 |
 
+---
 
+## 🔗 類別關聯圖（UML）
+
+下圖為本系統之 UML 類別圖（使用 PlantUML 編寫）：  
+
+> 💡 你可以將以下 PlantUML 程式碼貼至 [PlantUML 線上工具](https://www.plantuml.com/plantuml/) 或使用 VS Code 插件 `PlantUML` 即時預覽類別圖。
+
+<details>
+<summary>點我展開 UML 程式碼</summary>
+
+```plantuml
+@startuml
+'===================
+' Enum
+'===================
+enum InvitationStatus {
+    Pending
+    Accepted
+    Declined
+}
+
+'===================
+' Classes
+'===================
+abstract class PersonalInfo {
+    - gender: String
+    - region: String
+
+    + getGender(): String
+    + getRegion(): String
+}
+
+class Member {
+    {static} - IDCounter: AtomicInteger
+    - ID: String
+    - name: String
+    - email: String
+    - age: int
+    - dailyInvitationCount: int
+    - lastInvitationDate: Date
+
+    {static} - UniqueId(): String
+    + Invite(M: Member, IM: InvitationManager): boolean
+    - resetInviteCount(D: Date): void
+    + getDailyInvitationCount(): int
+    + getEmail(): String
+    + getID(): String
+    + getAge(): int
+}
+
+class Filter {
+    - minAge: int
+    - maxAge: int
+
+    + matches(U: Member): boolean
+    + filterMembers(Members: List<Member>, filter: Filter): List<Member>
+}
+
+class InvitationManager {
+    {static} - MaxInvites: int
+    {static} - count: int
+    - invitationRecords: List<Invitation>
+
+    + canInvite(U: Member): boolean
+    + createInvitation(sender: Member, receiver: Member): Invitation
+    + notifyInvitation(invitation: Invitation): void
+    + getInvitationRecords(): List<Invitation>
+}
+
+class Invitation {
+    - invitationId: String
+    - sender: Member
+    - receiver: Member
+    - dateSent: Date
+    - status: InvitationStatus
+
+    + Invitation(sender: Member, receiver: Member)
+    + accept(): void
+    + decline(): void
+    + getInvitationId(): String
+    + getSender(): Member
+    + getReceiver(): Member
+    + getStatus(): InvitationStatus
+    + getDateSent(): Date
+}
+
+class Notification {
+    - message: String
+    - receiver: Member
+    - timestamp: Date
+
+    + sendNotification(): void
+    + getMessage(): String
+    + getReceiver(): Member
+    + getTimestamp(): Date
+}
+
+'===================
+' Relationships
+'===================
+PersonalInfo <|-- Member
+PersonalInfo <|-- Filter
+
+Filter "1"-->"0..*" Member : Use
+InvitationManager "1..*"<-->"1..*" Member : Use
+InvitationManager "1"+--"0..*" Invitation : contains
+InvitationManager "1"-->"0..*" Notification : Use
+Invitation "0..*"-->"1" Member : Sender/Receiver
+Invitation "1"-->"1" InvitationStatus : has
+Notification "1..*"-->"1..*" Member : receiver
+@enduml
+
+</details>```
+<br>
 ---
 
